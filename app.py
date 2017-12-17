@@ -10,7 +10,7 @@ from pyramid.session import SignedCookieSessionFactory
 import db
 import uuid
 import views
-
+import cartService
 
 #@view_config(request_method='GET', renderer='json')
 #def view_components(context,request):
