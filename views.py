@@ -3,7 +3,6 @@ from pyramid.httpexceptions import HTTPOk
 from pyramid.view import view_config, view_defaults
 import db
 import uuid
-
 from pyramid.config import Configurator
 
 
@@ -13,7 +12,7 @@ def view_components(context,request):
     #my_session_factory = UnencryptedCookieSessionFactoryConfig('itsaseekreet')
     #config = Configurator(session_factory = my_session_factory)
     request.session['id'] = uuid.uuid1()
-    print session['id']
+    print 'This is the session id!', request.session['id']
     #session = Request.session
     #session['id'] = uuid.uuid1()
     db.connectToDb()
