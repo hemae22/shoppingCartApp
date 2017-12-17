@@ -12,7 +12,7 @@ def connectToDb():
     rows = curr.fetchall()
     j = 1
     for row in rows:
-        dictionary[j] = {'id':row[0], 'NAME':row[1], 'DESCRIPTION':row[2], 'PRICE':row[3]}
+        dictionary[j] = [{'id':row[0], 'NAME':row[1], 'DESCRIPTION':row[2], 'PRICE':row[3]}]
         j = j + 1
 
     for i in dictionary:
