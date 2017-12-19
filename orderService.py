@@ -13,6 +13,8 @@ def order(context,request):
     time_of_delivery = request.params.get('time_of_delivery')
     clientInformation = {'clientName':clientName, 'address':address, 'date_of_delivery':date_of_delivery, \
     'time_of_delivery':time_of_delivery, 'order_id':order_id}
+    orderID = str(order_id)
+    request.session['order_id'] = orderID
     print cartService.cart
     orderItems = cartService.cart
     print "order items are", orderItems
