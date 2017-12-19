@@ -1,0 +1,59 @@
+Setup of Database:
+In code, setup config settings for the db to establish connection:
+In
+/shoppingCartApp/databaseconfig.py 
+
+- set 'hostname' with your host name
+- 'port' with your port
+- 'user' with your user name
+- 'passwd' with your password
+- 'db' with your database name
+
+Database Setup:
+1. Database called carcomponent_shopping
+2. Tables - Clients, Components, Orders, Orders_Price
+   
+   Table Components:
+   CREATE TABLE COMPONENTS(
+	id SERIAL PRIMARY KEY NOT NULL,
+	NAME TEXT NOT NULL,
+	DESCRIPTION TEXT NOT NULL,
+	PRICE INT NOT NULL);
+   
+    Table - Components :
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Joint','MEYLE Gelenk 16-16 031 0041/HD',15);
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Idler Arm','LEMFÖRDER Lenkzwischenhebel 16250 01',22);
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Booster','BOSCH Verstärker 0 204 840 449',55);
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Brake Regulator','TRW Bremskraftregler GPV1037',89);
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Track Control Arm','MEYLE Lenker, Radaufhängung 37-16 050 0052',66);
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Mounting,steering Gear','LEMFÖRDER Lagerung, Lenkgetriebe 17593 01',6);
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Steering Column','HELLA Lenkstockschalter 6TA 003 394-001',42);
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Steering Arm','HERTH+BUSS JAKOPARTS Lenkhebel J4805018',27);
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Intercooler','NRF Ladeluftkühler 30522',362);
+    INSERT INTO COMPONENTS(NAME, DESCRIPTION, PRICE) VALUES ('Pressure Converter','PIERBURG Druckwandler, Turbolader 7.00887.20.0',56);	
+
+    Table Clients:
+    CREATE TABLE CLIENTS(
+	Name TEXT NOT NULL,
+	Address TEXT NOT NULL,
+	client_ID SERIAL PRIMARY KEY NOT NULL); 
+ 
+
+   Table Orders:
+   CREATE TABLE ORDERS(
+	Session_ID uuid,
+	Client_ID INT,
+	Order_ID SERIAL PRIMARY KEY NOT NULL,
+	Product_ID INT NOT NULL,
+	Product_Name TEXT NOT NULL,
+	Description TEXT NOT NULL,
+	Number_of_Products INT NOT NULL,
+	Price INT NOT NULL,
+	Date_of_Delivery DATE,
+	Time_of_Delivery TIME);
+
+  Table Orders_Price:
+  CREATE TABLE ORDERS_PRICE(
+	Order_ID INT UNIQUE,
+	Total_Price INT);
+ 

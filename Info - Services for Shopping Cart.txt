@@ -1,0 +1,48 @@
+REST Services for Shopping Cart
+
+1. View Products List:
+/viewComponents - GET 
+- Displays the Car Components Product List
+
+To Test:
+	Request Example : curl http://localhost:6543/viewComponents
+
+2. CartService
+This service provides all operations related to the Shopping cart
+	Operations include: 
+	1. Add to cart - Add Items to Cart
+  		/cartService/addToCart
+		Parameters required = {product_id, product_name, no_of_products, description, price}
+		Request Type : POST
+	2. RemoveFromCart - Remove Items From Cart
+		/cartService/removeFromCart
+		Parameters required = {product_id, product_name, no_of_products, description, price}
+		Request Type : POST
+	3. View Cart - View Items in Cart
+		/cartService/viewCart
+		Request Type : GET
+
+To Test - Cart Service
+Request Examples:
+	Add to Cart - curl -i -d "product_id=12&product_name=part2&no_of_products=2&description=Joints&price=100" http://localhost:6543/cartService/addToCart
+	RemoveFromCart - curl -i -d "product_id=12&product_name=part2&no_of_products=2&description=Joints&price=100" http://localhost:6543/cartService/removeFromCart
+	viewCart - curl http://localhost:6543/cartService/viewCart
+	clearCart - curl http://localhost:6543/cartService/clearCart
+	
+
+3. OrderService
+This service allows placing an order and viewing an order
+	Operations include:
+	1. Place an order 
+		/orderService
+		Parameters required = {client_Name, client_ID(for existing client), address, date_of_delivery, time_of_delivery}
+		Request Type : POST
+	2. View an Order - View Order placed
+		/orderService/viewOrder
+		Parameters required = {orderID}
+		Request Type : POST
+
+To Test - OrderService
+Request Examples:
+	Place an  Order - curl -i -d "client_Name=Nelly&address=Ams&date_of_delivery=23-12-2017&time_of_delivery=9:00AM" http://localhost:6543/orderService
+	View an Order - curl -i -d "orderID=3" http://localhost:6543/orderService/viewOrder
