@@ -62,7 +62,7 @@ def viewOrderDetails(orderID):
     order_ID = str(orderID)
     print order_ID
     curr = conn.cursor()
-    curr.execute("SELECT * FROM ORDERS WHERE Order_ID = %s", (order_ID)
+    curr.execute("SELECT * FROM ORDERS WHERE Order_ID = %s", (order_ID))
     rows = curr.fetchall()
     conn.close()
     return rows
