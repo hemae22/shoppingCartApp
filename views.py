@@ -11,6 +11,6 @@ def view_components(context,request):
     print('Incoming request')
     request.session['id'] = uuid.uuid1()
     print 'This is the session id!', request.session['id']
-    db.connectToDb()
+    db.retrieveProducts()
     print db.dictionary
     return (db.dictionary)

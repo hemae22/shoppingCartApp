@@ -35,6 +35,7 @@ def addToCart(context,request):
 def removeFromCart(context,request):
     product_id = request.params.get('product_id')
     no_of_products = request.params.get('no_of_products')
+    product_name = request.params.get('product_name')
     number_products = int(no_of_products)
     number_products = number_products - 1
     product_description = request.params.get('description')
@@ -48,7 +49,7 @@ def removeFromCart(context,request):
         del cart[product_id]
         print cart
 
-@view_config(route_name = 'clearCart', request_method='POST', renderer='json')
+@view_config(route_name = 'clearCart', request_method='GET', renderer='json')
 def clearCart(context,request):
     cart.clear()
     print cart
