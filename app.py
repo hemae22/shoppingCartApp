@@ -11,6 +11,7 @@ import db
 import uuid
 import views
 import cartService
+import orderService
 
 #@view_config(request_method='GET', renderer='json')
 #def view_components(context,request):
@@ -43,5 +44,9 @@ if __name__ == '__main__':
     config.add_view(cartService.clearCart, route_name='clearCart', renderer= 'json')
     config.add_route('viewCart', '/cartService/viewCart')
     config.add_view(cartService.viewCart, route_name='viewCart', renderer= 'json')
+    config.add_route('orderService', '/orderService')
+    config.add_view(orderService.order, route_name='orderService', renderer= 'json')
+    config.add_route('viewOrder', '/orderService/viewOrder')
+    config.add_view(orderService.viewOrder, route_name='viewOrder', renderer= 'json')
     app = config.make_wsgi_app()
     serve(app, host='0.0.0.0', port=6543)

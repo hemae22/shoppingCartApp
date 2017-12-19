@@ -7,6 +7,7 @@ cart = {}
 def addToCart(context,request):
     product_id = request.params.get('product_id')
     print product_id
+    product_name = request.params.get('product_name')
     no_of_products = request.params.get('no_of_products')
     print no_of_products
     test_value = no_of_products * 10
@@ -18,15 +19,17 @@ def addToCart(context,request):
     #if product_id != request.session['product_id'] or request.session['product_id'] is None:
     if 'product_id' in request.session:
         print 'In session!'
+        product_id = product_id.encode("utf-8")
         no_of_products = cart[product_id].get('no_of_products')
         no_of_products = no_of_products + 1
-        cart[product_id] = {'no_of_products':no_of_products.encode("utf-8"), 'product_description':product_description.encode("utf-8"), 'price':price.encode("utf-8")}
+        cart[product_id] = {'product_id':product_id,'product_name':product_name.encode("utf-8"), 'no_of_products':no_of_products.encode("utf-8"), 'product_description':product_description.encode("utf-8"), 'price':price.encode("utf-8")}
         #cart[product_id].set('no_of_products') = no_of_products + 1
     else:
         print 'not in session'
         request.session['product_id'] = product_id
         request.session['no_of_products'] = no_of_products
-        cart[product_id] = {'no_of_products': no_of_products.encode("utf-8"), 'product_description': product_description.encode("utf-8"), 'price': price.encode("utf-8")}
+        product_id = product_id.encode("utf-8")
+        cart[product_id] = {'product_id':product_id, 'product_name':product_name.encode("utf-8"), 'no_of_products': no_of_products.encode("utf-8"), 'product_description': product_description.encode("utf-8"), 'price': price.encode("utf-8")}
         print cart
         #cart[product_id] = {no_of_products + 1, product_description, price}
 
@@ -38,16 +41,25 @@ def removeFromCart(context,request):
     number_products = number_products - 1
     product_description = request.params.get('description')
     price = request.params.get('price')
-    cart[product_id] = {'no_of_products':number_products, 'product_description': product_description.encode("utf-8"), 'price': price.encode("utf-8")}
+    product_id = product_id.encode("utf-8")
+    cart[product_id]= {'product_id':product_id,'product_name':product_name.encode("utf-8"), 'no_of_products':number_products, 'product_description': product_description.encode("utf-8"), 'price': price.encode("utf-8")}
     request.session['no_of_products'] = cart[product_id].get('no_of_products')
     print cart
+    if cart[product_id].get('no_of_products') == 0:
+        print 'inside delete cart'
+        del cart[product_id]
+        print cart
 
 @view_config(route_name = 'clearCart', request_method='POST', renderer='json')
 def clearCart(context,request):
     cart.clear()
-    request.session.pop['product_id']
-    request.session.pop['no_of_products']
+    #request.session.pop['product_id']
+    #request.session.pop['no_of_products']
+    print cart
 
 @view_config(route_name = 'viewCart', request_method='GET', renderer='json')
 def viewCart(context,request):
-    return cart;
+    if len(cart) == 0:
+        return "Cart is Empty"
+    else:
+        return cart;
