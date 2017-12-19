@@ -44,8 +44,7 @@ def placeOrder(orderItems, clientInformation):
         print "DOD", date_of_delivery
         time_of_delivery = clientInformation['time_of_delivery']
         print "TOD", time_of_delivery
-        curr.execute("UPDATE ORDERS SET Order_ID = %s, Product_ID = %s, Product_Name = %s, Description = %s, Number_of_Products = %s,\
-         Price = %s, Date_of_Delivery = %s, Time_of_Delivery = %s", (order_id, product_id, product_name, product_description, price, date_of_delivery, time_of_delivery))
+        curr.execute("UPDATE ORDERS SET Order_ID = %s, Product_ID = %s, Product_Name = %s, Description = %s, Number_of_Products = %s, Price = %s, Date_of_Delivery = %s, Time_of_Delivery = %s", (order_id, product_id, product_name, product_description, price, date_of_delivery, time_of_delivery))
         conn.commit()
     #conn.commit()
     curr.execute("SELECT SUM(PRICE) FROM ORDERS INNER JOIN CLIENTS ON CLIENTS.ORDER_ID = ORDERS.ORDER_ID")
