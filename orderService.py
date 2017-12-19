@@ -7,20 +7,21 @@ orderItems = {}
 
 @view_config(route_name ='orderService', request_method='POST', renderer='json')
 def order(context,request):
+    request.session['id'] = uuid.uuid1()
+    sessionID = request.session['id']
     clientName =  request.params.get('client_Name')
-    order_id = uuid.uuid1()
     address = request.params.get('address')
+    if request.params.get('client_ID') is None:
+        client_ID = db.createClient(clientName, address)
+    else:
+        client_ID = request.params.get('client_ID')
     date_of_delivery = request.params.get('date_of_delivery')
     time_of_delivery = request.params.get('time_of_delivery')
-    clientInformation = {'clientName':clientName, 'address':address, 'date_of_delivery':date_of_delivery, \
-    'time_of_delivery':time_of_delivery, 'order_id':order_id}
-    orderID = str(order_id)
-    request.session['order_id'] = orderID
     print cartService.cart
     orderItems = cartService.cart
-    print "order items are", orderItems
-    db.placeOrder(orderItems,clientInformation)
-    return clientInformation['order_id']
+    order_ID = db.placeOrder(orderItems,client_ID,sessionID,date_of_delivery,time_of_delivery)
+    return order_ID
+
 
 @view_config(route_name ='viewOrder', request_method='POST', renderer='json')
 def viewOrder(context,request):

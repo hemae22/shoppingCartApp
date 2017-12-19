@@ -24,11 +24,17 @@ def retrieveProducts():
     print len(dictionary)
     conn.close()
 
-def placeOrder(orderItems, clientInformation):
+def createClient(clientName, address):
     curr = conn.cursor()
-    order_id = str(clientInformation['order_id'])
-    print "order_id is", order_id
-    curr.execute("UPDATE CLIENTS SET Name = %s, Address = %s, Order_ID = %s", (clientInformation['clientName'], clientInformation['address'], order_id))
+    curr.execute("INSERT INTO CLIENTS(Name, Address) VALUES (%s,%s)", (clientName, address))
+    curr.execute("SELECT Client_ID from CLIENTS where Name = %s", [clientName])
+    rows = curr.fetchone()
+    client_ID = rows[0]
+    return client_ID
+
+def placeOrder(orderItems,client_ID,sessionID,date_of_delivery,time_of_delivery):
+    curr = conn.cursor()
+    session_ID = str(sessionID)
     for item in orderItems:
         product_id = orderItems[item].get('product_id')
         print "PRODUCT ID", product_id
@@ -40,40 +46,39 @@ def placeOrder(orderItems, clientInformation):
         print "NO OF PRODUCTS", no_of_products
         price = orderItems[item].get('price')
         print "PRICE", price
-        date_of_delivery = clientInformation['date_of_delivery']
         print "DOD", date_of_delivery
-        time_of_delivery = clientInformation['time_of_delivery']
-        print "TOD", time_of_delivery
+        print "TOD",time_of_delivery
         curr.execute("SET datestyle = dmy")
-        curr.execute("UPDATE ORDERS SET Order_ID = %s, Product_ID = %s, Product_Name = %s, Description = %s, Number_of_Products = %s, Price = %s, Date_of_Delivery = %s, Time_of_Delivery = %s", (order_id, product_id, product_name, product_description, no_of_products, price, date_of_delivery, time_of_delivery))
+        curr.execute("INSERT INTO ORDERS(Session_ID, Client_ID, Product_ID, Product_Name, Description, Number_of_Products, Price, Date_of_Delivery, Time_of_Delivery) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)", (session_ID, client_ID, product_id, product_name, product_description, no_of_products, price, date_of_delivery, time_of_delivery))
         conn.commit()
-    curr.execute("SELECT SUM(PRICE) FROM ORDERS INNER JOIN CLIENTS ON CLIENTS.ORDER_ID = ORDERS.ORDER_ID")
+    curr.execute("SELECT ORDER_ID FROM ORDERS where Session_ID = %s", [session_ID])
     rows = curr.fetchone()
-    total_price = rows[0]
+    order_ID = rows[0]
+    curr.execute("SELECT SUM(PRICE) FROM ORDERS where Session_ID=%s", [session_ID])
+    items = curr.fetchone()
+    total_price = items[0]
+    curr.execute("INSERT INTO ORDERS_PRICE(Order_ID, Total_Price) VALUES (%s,%s)", (order_ID, total_price))
     print "this is total price", total_price
-    curr.execute("UPDATE CLIENTS SET Total_Price = %s", [total_price])
     conn.commit()
     print "Order Operation Completed"
+    return order_ID
 
 def viewOrderDetails(orderID):
-    order_ID = str(orderID)
-    print order_ID
     sql_text = "SELECT * FROM ORDERS WHERE Order_ID = %s"
-    data = (order_ID)
+    data = (orderID)
     curr = conn.cursor()
     curr.execute(sql_text, [data])
     rows = curr.fetchall()
     resultset = {}
     j = 0
     for row in rows:
-       resultset[j] = [{'Order_ID':str(row[0]), 'Product_ID':row[1], 'Product_Name':row[2], 'Description':row[3], 'Number_of_Products':row[4], 'Price':row[5], 'Date_of_Delivery':str(row[6]), 'Time_of_Delivery':str(row[7])}]
+       resultset[j] = [{'Order_ID':str(row[2]), 'Product_ID':row[3], 'Product_Name':row[4], 'Description':row[5], 'Number_of_Products':row[6], 'Price':row[7], 'Date_of_Delivery':str(row[8]), 'Time_of_Delivery':str(row[9])}]
        j= j + 1
     return resultset
 
 def getTotalPrice(orderID):
-    order_ID = str(orderID)
     curr = conn.cursor()
-    curr.execute("SELECT Total_Price from CLIENTS where Order_ID = %s", [order_ID])
+    curr.execute("SELECT Total_Price from ORDERS_PRICE where Order_ID = %s", [orderID])
     rows = curr.fetchone()
     total_price = rows[0]
     conn.close()
