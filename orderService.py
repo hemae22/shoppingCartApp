@@ -2,6 +2,7 @@ from pyramid.view import view_config, view_defaults
 import cartService
 import db
 import uuid
+import json
 orderItems = {}
 
 @view_config(route_name ='orderService', request_method='POST', renderer='json')
@@ -25,4 +26,5 @@ def order(context,request):
 def viewOrder(context,request):
     orderID = request.params.get('orderID')
     resultset = db.viewOrderDetails(orderID)
-    return resultset
+    totalPrice = db.getTotalPrice(orderID)
+    return resultset, totalPrice

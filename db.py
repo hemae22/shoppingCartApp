@@ -1,15 +1,15 @@
 import psycopg2
-
+import json
+import databaseconfig as cfg
 dictionary = {}
-#def connectToDb():
-conn = psycopg2.connect(database = "carcomponent_shopping", user = "postgres", password = "hema", host = "localhost", port = "5432")
+
+conn = psycopg2.connect(database = cfg.mypsql['db'], user = cfg.mypsql['user'], password = cfg.mypsql['passwd'], host = cfg.mypsql['host'], port = cfg.mypsql['port'])
 print "Opened database successfully"
 curr = conn.cursor()
 
 def retrieveProducts():
     curr = conn.cursor()
-
-    #view components table
+#view components table
     curr.execute("Select id, NAME, DESCRIPTION, PRICE FROM COMPONENTS")
     rows = curr.fetchall()
     j = 1
@@ -47,22 +47,34 @@ def placeOrder(orderItems, clientInformation):
         curr.execute("SET datestyle = dmy")
         curr.execute("UPDATE ORDERS SET Order_ID = %s, Product_ID = %s, Product_Name = %s, Description = %s, Number_of_Products = %s, Price = %s, Date_of_Delivery = %s, Time_of_Delivery = %s", (order_id, product_id, product_name, product_description, no_of_products, price, date_of_delivery, time_of_delivery))
         conn.commit()
-    #conn.commit()
     curr.execute("SELECT SUM(PRICE) FROM ORDERS INNER JOIN CLIENTS ON CLIENTS.ORDER_ID = ORDERS.ORDER_ID")
     rows = curr.fetchone()
     total_price = rows[0]
     print "this is total price", total_price
     curr.execute("UPDATE CLIENTS SET Total_Price = %s", [total_price])
     conn.commit()
-    print "operations completed"
-
-
+    print "Order Operation Completed"
 
 def viewOrderDetails(orderID):
     order_ID = str(orderID)
     print order_ID
+    sql_text = "SELECT * FROM ORDERS WHERE Order_ID = %s"
+    data = (order_ID)
     curr = conn.cursor()
-    curr.execute("SELECT * FROM ORDERS WHERE Order_ID = %s", (order_ID))
+    curr.execute(sql_text, [data])
     rows = curr.fetchall()
+    resultset = {}
+    j = 0
+    for row in rows:
+       resultset[j] = [{'Order_ID':str(row[0]), 'Product_ID':row[1], 'Product_Name':row[2], 'Description':row[3], 'Number_of_Products':row[4], 'Price':row[5], 'Date_of_Delivery':str(row[6]), 'Time_of_Delivery':str(row[7])}]
+       j= j + 1
+    return resultset
+
+def getTotalPrice(orderID):
+    order_ID = str(orderID)
+    curr = conn.cursor()
+    curr.execute("SELECT Total_Price from CLIENTS where Order_ID = %s", [order_ID])
+    rows = curr.fetchone()
+    total_price = rows[0]
     conn.close()
-    return rows
+    return total_price
